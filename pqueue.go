@@ -12,37 +12,38 @@ func NewPqueue() *Pqueue {
 func (p *Pqueue) percolateUp() {
 	element := p.Size()
 
-	for {
+	for (element / 2) > 0{
 
-		if element <= 1 {
-			break
-		}
-
-		parent := element / 2
-		if p.Pqueue[parent] > p.Pqueue[element] {
-			temp := p.Pqueue[parent]
-			p.Pqueue[parent] = p.Pqueue[element]
-			p.Pqueue[element] = temp
+		if p.Pqueue[element/2] > p.Pqueue[element] {
+			p.Pqueue[element], p.Pqueue[element/2] = p.Pqueue[element/2], p.Pqueue[element]
 		} else {
 			break
 		}
 
-		element = parent
+		element = element/2
 	}
+}
+
+func (p *Pqueue) minChild(index int) int{
+	if (index * 2) + 1 > p.Size(){
+		return index * 2
+	}
+
+	if p.Pqueue[index * 2] < p.Pqueue[(index * 2) + 1]{
+		return index * 2
+	}
+
+	return (index * 2) + 1
 }
 
 func (p *Pqueue) percolateDown() {
 	element := 1
-	for {
-		leftChild := element * 2
-		rightChild := (element * 2) + 1
+	for element * 2 <= p.Size() {
+		minChild := p.minChild(element)
 
-		if leftChild <= p.Size() && p.Pqueue[element] > p.Pqueue[leftChild] {
-			p.Pqueue[element], p.Pqueue[leftChild] = p.Pqueue[leftChild], p.Pqueue[element]
-			element = leftChild
-		} else if rightChild <= p.Size() && p.Pqueue[element] > p.Pqueue[rightChild] {
-			p.Pqueue[element], p.Pqueue[rightChild] = p.Pqueue[rightChild], p.Pqueue[element]
-			element = rightChild
+		if p.Pqueue[element] > p.Pqueue[minChild] {
+			p.Pqueue[element], p.Pqueue[minChild] = p.Pqueue[minChild], p.Pqueue[element]
+			element = minChild
 		} else {
 			break
 		}
