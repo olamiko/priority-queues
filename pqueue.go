@@ -1,14 +1,12 @@
 // Package implements the priority queue data structure
 package pqueue
 
-type BinaryHeap func() []int
-
 type Pqueue struct {
-	Pqueue BinaryHeap
+	Pqueue []int
 }
 
-func BinaryHeap() []int{
-	return []int{0}
+func NewPqueue() *Pqueue {
+	return &Pqueue{Pqueue: []int{0}}
 }
 
 func (p *Pqueue) percolateUp() {
@@ -21,10 +19,10 @@ func (p *Pqueue) percolateUp() {
 		}
 
 		parent := element / 2
-		if p.BinaryHeap[parent] > p.BinaryHeap[element] {
-			temp := p.BinaryHeap[parent]
-			p.BinaryHeap[parent] = p.BinaryHeap[element]
-			p.BinaryHeap[element] = temp
+		if p.Pqueue[parent] > p.Pqueue[element] {
+			temp := p.Pqueue[parent]
+			p.Pqueue[parent] = p.Pqueue[element]
+			p.Pqueue[element] = temp
 		} else {
 			break
 		}
@@ -34,22 +32,16 @@ func (p *Pqueue) percolateUp() {
 }
 
 func (p *Pqueue) percolateDown() {
-	element = 1
+	element := 1
 	for {
-		leftChild = element * 2
+		leftChild := element * 2
+		rightChild := (element * 2) + 1
 
-		if p.Size() <= leftChild {
-			break
-		}
-		if p.Size() <= rightChild {
-			rightChild = element
-		}
-
-		if p.BinaryHeap[element] > p.BinaryHeap[leftChild] {
-			p.BinaryHeap[element], p.BinaryHeap[leftChild] = p.BinaryHeap[leftChild], p.BinaryHeap[element]
+		if leftChild <= p.Size() && p.Pqueue[element] > p.Pqueue[leftChild] {
+			p.Pqueue[element], p.Pqueue[leftChild] = p.Pqueue[leftChild], p.Pqueue[element]
 			element = leftChild
-		} else if p.BinaryHeap[element] > p.BinaryHeap[rightChild] {
-			p.BinaryHeap[element], p.BinaryHeap[rightChild] = p.BinaryHeap[rightChild], p.BinaryHeap[element]
+		} else if rightChild <= p.Size() && p.Pqueue[element] > p.Pqueue[rightChild] {
+			p.Pqueue[element], p.Pqueue[rightChild] = p.Pqueue[rightChild], p.Pqueue[element]
 			element = rightChild
 		} else {
 			break
@@ -58,20 +50,19 @@ func (p *Pqueue) percolateDown() {
 	}
 }
 
-func (p *Pqueue) Insert(k) {
-	p.BinaryHeap = append(p.BinaryHeap, k)
+func (p *Pqueue) Insert(k int) {
+	p.Pqueue = append(p.Pqueue, k)
 	p.percolateUp()
 }
 
 func (p Pqueue) FindMin() int {
-	return p.BinaryHeap[0]
+	return p.Pqueue[1]
 }
 
 func (p *Pqueue) DelMin() int {
-	min := p.BinaryHeap[1]
-	length := p.Size()
-	p.BinaryHeap[0] = p.BinaryHeap[length]
-	p.BinaryHeap = p.BinaryHeap[:-1]
+	min, length := p.Pqueue[1], p.Size()
+	p.Pqueue[1] = p.Pqueue[length]
+	p.Pqueue = p.Pqueue[:length-1]
 
 	p.percolateDown()
 
@@ -79,9 +70,9 @@ func (p *Pqueue) DelMin() int {
 }
 
 func (p Pqueue) Size() int {
-	return len(p.BinaryHeap) - 1
+	return len(p.Pqueue) - 1
 }
 
-func (p pqueue) IsEmpty() bool {
-	return p.size() > 0
+func (p Pqueue) IsEmpty() bool {
+	return p.Size() < 1
 }
